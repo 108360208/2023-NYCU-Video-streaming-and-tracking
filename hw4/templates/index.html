@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Camera Feed</title>
+</head>
+<body>
+    <h1>Local Camera Feed</h1>
+    <img src="{{ url_for('video_feed') }}" alt="Video Feed" id="videoFeed">
+</body>
+</html>
+<div id="positionInfo">Mouse Position: (0, 0)</div>
+
+<script>
+  var positionInfo = document.getElementById('positionInfo');
+  var videoFeed = document.getElementById('videoFeed');
+
+  videoFeed.addEventListener('click', function(event) {
+    var mouseX = event.clientX;
+    var mouseY = event.clientY;
+
+    var rect = videoFeed.getBoundingClientRect();
+    var imageX = mouseX - rect.left;
+    var imageY = mouseY - rect.top;     
+
+    positionInfo.textContent = 'Mouse Position on Image: (' + imageX + ', ' + imageY + ')';
+    sendPositionData(imageX, imageY);
+  });
+  function sendPositionData(x, y) {
+  
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/update_position', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    var data = { x: x, y: y };
+    var jsonData = JSON.stringify(data);
+
+    xhr.send(jsonData);
+  }
+</script>
